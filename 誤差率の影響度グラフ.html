@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>各パラメータ別 F の相対誤差の比較</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f5f5f5;
+    }
+    h2 {
+      text-align: center;
+    }
+    .chart-container {
+      width: 90%;
+      margin: 20px auto;
+      background-color: #fff;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <div class="chart-container">
+    <h2>各パラメータ別 F の相対誤差（複数曲線の重ね合わせ）</h2>
+    <canvas id="overlayGraph" width="600" height="400"></canvas>
+  </div>
+
+  <script>
+    const xValues = [];
+    const step = 0.005;
+    for (let x = 0; x <= 10; x += step) {
+      xValues.push(x.toFixed(2));
+    }
+    
+    const F_error_I = [];
+    const F_error_t = [];
+    const F_error_dm = [];
+    const F_error_line = [];
+
+    xValues.forEach(x => {
+      let xVal = parseFloat(x);
+      F_error_I.push(Math.sqrt(Math.pow(xVal,2) + Math.pow(0.5,2) + Math.pow(2.0,2)).toFixed(2));
+      F_error_t.push(Math.sqrt(Math.pow(0.5,2) + Math.pow(xVal,2) + Math.pow(2.0,2)).toFixed(2));
+      F_error_dm.push(Math.sqrt(Math.pow(0.5,2) + Math.pow(0.5,2) + Math.pow(xVal,2)).toFixed(2));
+      F_error_line.push(5);
+    });
+
+    const ctx = document.getElementById('overlayGraph').getContext('2d');
+    const overlayChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: xValues,
+        datasets: [
+          {
+            label: "電流 I, 時間 t の誤差変動時の F相対誤差",
+            data: F_error_I,
+            borderColor: 'blue',
+            fill: false,
+            tension: 0.1
+          },
+          {
+            label: "質量変化 Δm の誤差変動時の F相対誤差",
+            data: F_error_dm,
+            borderColor: 'orange',
+            fill: false,
+            tension: 0.1
+          },
+          {
+            label: "F相対誤差 5%ライン",
+            data: F_error_line,
+            borderColor: 'red',
+            borderWidth: 4,
+            fill: false,
+            pointRadius: 0,
+            borderDash: []
+          }
+        ]
+      },
+      options: {
+        scales: {
+          x: { 
+            title: { display: true, text: "各パラメータの相対誤差 (%)（変動させた値）" }
+          },
+          y: { 
+            title: { display: true, text: "全体 F の相対誤差 (%)" }
+          }
+        },
+        plugins: {
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return context.dataset.label + ": " + context.parsed.y + "%";
+              }
+            }
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>
