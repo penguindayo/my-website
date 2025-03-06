@@ -25,14 +25,14 @@
 </head>
 <body>
   <div class="chart-container">
-    <h2>各パラメータ別 F の相対誤差（複数曲線の重ね合わせ）</h2>
+    <h2>各パラメータ別 F の相対誤差</h2>
     <canvas id="overlayGraph" width="600" height="400"></canvas>
   </div>
 
   <script>
     const xValues = [];
     const step = 0.005;
-    for (let x = 0; x <= 10; x += step) {
+    for (let x = 0; x <= 17; x += step) {
       xValues.push(x.toFixed(2));
     }
     
